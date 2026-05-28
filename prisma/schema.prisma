@@ -1,0 +1,73 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String     // Hashed password
+  role      String     @default("SALES_OFFICER") // "ADMIN" or "SALES_OFFICER"
+  salesLogs SalesLog[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("users")
+}
+
+model CarModel {
+  id         String      @id @default(uuid())
+  modelName  String      @map("model_name")
+  baseSuffix String      @map("base_suffix") // e.g., DX, LX, VX
+  variant    String      // e.g., Petrol, Diesel, EV
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  salesItems SalesItem[]
+
+  @@map("car_models")
+}
+
+model IncentiveSlab {
+  id              String   @id @default(uuid())
+  minRange        Int      @map("min_range")
+  maxRange        Int?     @map("max_range") // Null represents infinity (e.g. "8+")
+  incentivePerCar Float    @map("incentive_per_car")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("incentive_slabs")
+}
+
+model SalesLog {
+  id             String      @id @default(uuid())
+  userId         String      @map("user_id")
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  month          String      // Format: "YYYY-MM" (e.g., "2026-05")
+  totalSales     Int         @map("total_sales")
+  totalIncentive Float       @map("total_incentive")
+  salesItems     SalesItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@unique([userId, month]) // Ensure only one master entry per user per month
+  @@map("sales_logs")
+}
+
+model SalesItem {
+  id         String   @id @default(uuid())
+  salesLogId String   @map("sales_log_id")
+  salesLog   SalesLog @relation(fields: [salesLogId], references: [id], onDelete: Cascade)
+  carModelId String   @map("car_model_id")
+  carModel   CarModel @relation(fields: [carModelId], references: [id], onDelete: Restrict)
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([salesLogId, carModelId]) // Avoid duplicate models within the same sales log
+  @@map("sales_items")
+}
