@@ -4,6 +4,8 @@ import { verifyJWT } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { validateSlabRange } from '@/lib/slabs';
 
+export const dynamic = 'force-dynamic';
+
 async function checkAdminAuth() {
   const token = cookies().get('token')?.value;
   if (!token) return null;

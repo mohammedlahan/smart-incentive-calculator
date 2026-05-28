@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { verifyJWT } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 async function checkSalesAuth() {
   const token = cookies().get('token')?.value;
   if (!token) return null;

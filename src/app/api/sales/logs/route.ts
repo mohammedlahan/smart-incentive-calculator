@@ -4,6 +4,8 @@ import { verifyJWT } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { calculateIncentive } from '@/lib/incentive';
 
+export const dynamic = 'force-dynamic';
+
 async function checkSalesAuth() {
   const token = cookies().get('token')?.value;
   if (!token) return null;
