@@ -190,8 +190,8 @@ export default function CarModelsPage() {
           </button>
         </div>
       ) : (
-        /* Catalog Table Card */
-        <div className="bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
+        /* Catalog Table Card - Hidden on Mobile */
+        <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -263,6 +263,64 @@ export default function CarModelsPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      ) : null}
+
+      {/* Mobile Catalog Cards List - Visible on Mobile Only */}
+      {models.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 md:hidden">
+          {models.map((model) => (
+            <div key={model.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded bg-primary/15 text-primary">
+                    <Car className="h-4 w-4" />
+                  </div>
+                  <span className="font-extrabold text-sm text-foreground">{model.modelName}</span>
+                </div>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                  model.variant === 'EV' 
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300' 
+                    : model.variant === 'Hybrid'
+                    ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/60 dark:text-rose-300'
+                    : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300'
+                }`}>
+                  {model.variant}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Trim Suffix</span>
+                  <span className="font-bold text-foreground">{model.baseSuffix}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Model ID</span>
+                  <span className="font-mono text-[9px] text-muted-foreground block text-right">{model.id.substring(0, 8)}</span>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
+                <button
+                  type="button"
+                  onClick={() => openEditModal(model)}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Are you sure you want to delete ${model.modelName} ${model.baseSuffix}?`)) {
+                      handleDelete(model.id);
+                    }
+                  }}
+                  disabled={deletingId === model.id}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

@@ -207,8 +207,8 @@ export default function IncentiveSlabsPage() {
           </button>
         </div>
       ) : (
-        /* Slabs Table Card */
-        <div className="bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
+        /* Slabs Table Card - Hidden on Mobile */
+        <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -274,6 +274,64 @@ export default function IncentiveSlabsPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      ) : null}
+
+      {/* Mobile Slabs Cards List - Visible on Mobile Only */}
+      {slabs.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 md:hidden">
+          {slabs.map((slab) => (
+            <div key={slab.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded bg-primary/15 text-primary">
+                    <Sliders className="h-4 w-4" />
+                  </div>
+                  <span className="font-extrabold text-sm text-foreground">
+                    {slab.maxRange === null 
+                      ? `${slab.minRange}+ Units Target` 
+                      : `${slab.minRange} – ${slab.maxRange} Units Target`}
+                  </span>
+                </div>
+                <span className="text-xs font-black text-primary bg-primary/10 px-2.5 py-1 rounded border border-primary/20">
+                  ₹{slab.incentivePerCar.toLocaleString('en-IN')}/car
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Min Bound</span>
+                  <span className="font-bold text-foreground">{slab.minRange} units</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Max Bound</span>
+                  <span className="font-bold text-foreground block text-right">
+                    {slab.maxRange === null ? 'No Limit' : `${slab.maxRange} units`}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
+                <button
+                  type="button"
+                  onClick={() => openEditModal(slab)}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Are you sure you want to delete this slab?`)) {
+                      handleDelete(slab.id);
+                    }
+                  }}
+                  disabled={deletingId === slab.id}
+                  className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
