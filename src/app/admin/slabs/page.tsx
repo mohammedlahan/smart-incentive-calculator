@@ -281,7 +281,7 @@ export default function IncentiveSlabsPage() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-4">
           <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md relative overflow-hidden animate-slide-in">
-            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-blue-500" />
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary to-rose-500" />
             
             <div className="flex items-center justify-between px-6 py-5 border-b border-border">
               <h3 className="font-extrabold text-md text-foreground flex items-center gap-2">

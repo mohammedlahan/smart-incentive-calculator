@@ -161,7 +161,7 @@ export default function AdminAnalyticsPage() {
           <div className="bg-card border border-border/80 rounded-xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-indigo-500" />
+                <DollarSign className="h-5 w-5 text-rose-500" />
                 <h3 className="font-extrabold text-sm text-foreground">Monthly Incentive Payout (K)</h3>
               </div>
               <span className="text-[10px] bg-muted px-2 py-0.5 rounded font-extrabold text-muted-foreground uppercase tracking-wider">Bar Chart</span>
@@ -185,7 +185,7 @@ export default function AdminAnalyticsPage() {
                   <Bar 
                     dataKey="payoutK" 
                     name="Payout (₹ in Thousands)" 
-                    fill="#6366f1" 
+                    fill="hsl(var(--primary))" 
                     radius={[4, 4, 0, 0]} 
                   />
                 </BarChart>

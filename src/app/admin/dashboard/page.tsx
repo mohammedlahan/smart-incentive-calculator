@@ -84,12 +84,43 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1.5 font-medium">
-          Dealership sales statistics, payout aggregates, and team leaderboard.
-        </p>
+      {/* Premium Welcome Hero Banner */}
+      <div className="relative bg-card border border-border/85 rounded-2xl p-6 md:p-8 shadow-sm overflow-hidden dashboard-grid">
+        {/* Subtle decorative glow */}
+        <div className="absolute -top-24 -left-24 h-48 w-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 h-48 w-48 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span>Toyota Dealership Admin Portal</span>
+            </span>
+            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">
+              Welcome Back, Manager
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-xl font-medium">
+              Monitor officer targets, customize slab payout rules, and analyze active sales performance logs in real-time.
+            </p>
+          </div>
+
+          <div className="flex flex-row items-center gap-4 bg-muted/30 border border-border/60 rounded-xl p-4 shrink-0 glass">
+            <div className="text-right">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-0.5">Database Status</span>
+              <div className="flex items-center gap-2 justify-end">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-extrabold text-xs text-foreground font-mono">Neon.tech Cloud Live</span>
+              </div>
+            </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="text-left">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest block mb-0.5">System Date</span>
+              <span className="font-extrabold text-xs text-foreground font-mono">
+                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Summary Stat Cards */}
@@ -118,18 +149,18 @@ export default function AdminDashboard() {
         {/* Card 2: Total Incentive Payout */}
         <div className="bg-card border border-border/80 rounded-xl p-6 glow-card transition-all duration-300 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-15">
-            <DollarSign className="h-20 w-20 text-indigo-500" />
+            <DollarSign className="h-20 w-20 text-rose-500" />
           </div>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Incentives</span>
-            <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
+            <div className="p-2 rounded-lg bg-rose-500/10 text-rose-500 border border-rose-500/20">
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-black tracking-tight text-foreground">₹{summary.totalIncentives.toLocaleString('en-IN')}</span>
           </div>
-          <div className="text-[10px] text-indigo-500 font-bold mt-3 flex items-center gap-1">
+          <div className="text-[10px] text-rose-500 font-bold mt-3 flex items-center gap-1">
             <TrendingUp className="h-3 w-3" />
             <span>Dealer dynamic payout rate</span>
           </div>

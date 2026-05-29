@@ -65,11 +65,11 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4 relative overflow-hidden dashboard-grid">
       {/* Decorative Blur Spheres */}
       <div className="absolute top-1/4 left-1/4 h-72 w-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 h-72 w-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 h-72 w-72 bg-rose-600/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-md w-full bg-card border border-border/80 rounded-2xl shadow-xl relative overflow-hidden transition-all duration-300">
         {/* Top Metallic Border Glow */}
-        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary via-blue-500 to-indigo-600" />
+        <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary via-rose-500 to-red-700" />
         
         <div className="p-8">
           {/* Header */}

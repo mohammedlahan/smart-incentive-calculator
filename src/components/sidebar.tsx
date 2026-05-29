@@ -113,7 +113,7 @@ export default function Sidebar({ role }: SidebarProps) {
         <div className="flex items-center gap-3 px-6 py-6 border-b border-border">
           <Shield className="h-8 w-8 text-primary animate-pulse" />
           <div>
-            <h1 className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            <h1 className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-primary to-rose-500 bg-clip-text text-transparent">
               Incentive Pro
             </h1>
             <p className="text-xs text-muted-foreground font-medium">Dealership Admin</p>

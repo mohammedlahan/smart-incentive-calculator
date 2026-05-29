@@ -88,21 +88,41 @@ export default function SalesDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Officer Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1.5 font-medium">
-            Real-time tracking and incentive metrics for <span className="text-primary font-bold">{monthName()}</span>.
-          </p>
+      {/* Premium Welcome Hero Banner */}
+      <div className="relative bg-card border border-border/85 rounded-2xl p-6 md:p-8 shadow-sm overflow-hidden dashboard-grid">
+        {/* Subtle decorative glow */}
+        <div className="absolute -top-24 -left-24 h-48 w-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 h-48 w-48 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+              <span>Toyota Sales Representative Portal</span>
+            </span>
+            <h1 className="text-3xl font-black tracking-tight text-foreground md:text-4xl">
+              Performance Tracker
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-xl font-medium">
+              Track your monthly sales units, estimated incentive earnings, and progress towards the next payout slab for <span className="text-primary font-bold">{monthName()}</span>.
+            </p>
+          </div>
+
+          <div className="flex flex-row sm:flex-col items-center sm:items-end gap-4 shrink-0">
+            <Link
+              href="/sales/log-sales"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary/95 transition-all cursor-pointer w-full sm:w-auto"
+            >
+              <PenTool className="h-4.5 w-4.5" />
+              <span>Log Current Sales</span>
+            </Link>
+            
+            <div className="flex items-center gap-2 bg-muted/30 border border-border/60 rounded-lg px-3 py-1.5 text-[10px] font-bold text-muted-foreground font-mono glass">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Database: Connected</span>
+            </div>
+          </div>
         </div>
-        <Link
-          href="/sales/log-sales"
-          className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary/95 transition-all cursor-pointer w-full sm:w-auto"
-        >
-          <PenTool className="h-4.5 w-4.5" />
-          <span>Log Current Sales</span>
-        </Link>
       </div>
 
       {/* Error State */}
@@ -161,18 +181,18 @@ export default function SalesDashboard() {
         {/* KPI 3: Estimated Monthly Payout */}
         <div className="bg-card border border-border/80 rounded-xl p-6 glow-card transition-all duration-300 shadow-sm relative overflow-hidden">
           <div className="absolute top-0 right-0 p-4 opacity-15">
-            <DollarSign className="h-20 w-20 text-indigo-500" />
+            <DollarSign className="h-20 w-20 text-rose-500" />
           </div>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Estimated Payout</span>
-            <div className="p-2 rounded-lg bg-indigo-50/10 text-indigo-500 border border-indigo-500/20">
+            <div className="p-2 rounded-lg bg-rose-50/10 text-rose-500 border border-rose-500/20">
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-black tracking-tight text-foreground">₹{calc.totalIncentive.toLocaleString('en-IN')}</span>
           </div>
-          <p className="text-[10px] text-indigo-500 font-bold mt-3">Subject to monthly manager approval</p>
+          <p className="text-[10px] text-rose-500 font-bold mt-3">Subject to monthly manager approval</p>
         </div>
       </div>
 
@@ -208,7 +228,7 @@ export default function SalesDashboard() {
                     return (
                       <div className="w-full bg-secondary h-4 rounded-full overflow-hidden border border-border/60">
                         <div 
-                          className="bg-gradient-to-r from-primary to-indigo-600 h-full rounded-full transition-all duration-500" 
+                          className="bg-gradient-to-r from-primary to-rose-500 h-full rounded-full transition-all duration-500" 
                           style={{ width: `${Math.min(currentPct, 100)}%` }} 
                         />
                       </div>
@@ -218,14 +238,14 @@ export default function SalesDashboard() {
                   <div className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 h-4 rounded-full border border-border/60" />
                 )}
               </div>
-
+ 
               {/* Status Message */}
               <div className="p-4 bg-muted/40 border border-border/60 rounded-lg">
                 <p className="text-xs font-bold text-foreground leading-relaxed">
                   {calc.nextSlab && calc.carsNeededForNextSlab !== null ? (
                     <>
                       You have sold <span className="text-primary font-extrabold">{totalCars} cars</span>. You need only{' '}
-                      <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">{calc.carsNeededForNextSlab} more car(s)</span>{' '}
+                      <span className="text-rose-600 dark:text-rose-400 font-extrabold">{calc.carsNeededForNextSlab} more car(s)</span>{' '}
                       to unlock the next tier rate of{' '}
                       <span className="text-primary font-extrabold">₹{calc.nextSlab.incentivePerCar.toLocaleString('en-IN')}/car</span>{' '}
                       (increasing your payout potential significantly!).
