@@ -14,9 +14,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
+  const performLogin = async (emailVal: string, passwordVal: string) => {
+    const trimmedEmail = emailVal.trim();
+    if (!trimmedEmail || !passwordVal) {
       setError('Please fill in all fields.');
       return;
     }
@@ -28,7 +28,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: trimmedEmail, password: passwordVal }),
       });
 
       const data = await res.json();
@@ -50,10 +50,19 @@ export default function LoginPage() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await performLogin(email, password);
+  };
+
   // Quick fill helper for review
-  const handleQuickFill = (emailStr: string, passwordStr: string) => {
-    setEmail(emailStr);
-    setPassword(passwordStr);
+  const handleQuickFill = async (role: 'admin' | 'sales') => {
+    const emailVal = role === 'admin' ? 'admin@dealership.com' : 'sales@dealership.com';
+    const passwordVal = role === 'admin' ? 'admin123' : 'sales123';
+    
+    setEmail(emailVal);
+    setPassword(passwordVal);
+    await performLogin(emailVal, passwordVal);
   };
 
   return (
@@ -151,31 +160,24 @@ export default function LoginPage() {
 
           {/* Quick-fill Demo Accounts Section */}
           <div className="mt-8 pt-6 border-t border-border/80">
-            <div className="space-y-3">
-              <label className="block text-center text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground">
-                Quick-Fill Demo Account
-              </label>
-              <select
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (!val) return;
-                  const [uEmail, uPass] = val.split('|');
-                  handleQuickFill(uEmail, uPass);
-                }}
-                className="w-full px-3 py-2 rounded-lg border border-border bg-muted/30 text-foreground text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer text-center"
+            <h3 className="text-center text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground mb-4">
+              Demo Credentials
+            </h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('admin')}
+                className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer text-center"
               >
-                <option value="">-- Choose a Pre-Seeded Account --</option>
-                <optgroup label="Administrators (Role: ADMIN)">
-                  <option value="admin@dealership.com|admin123">Manager Admin (admin@dealership.com)</option>
-                  <option value="manager@dealership.com|admin123">Toyota GM (manager@dealership.com)</option>
-                </optgroup>
-                <optgroup label="Sales Officers (Role: SALES_OFFICER)">
-                  <option value="sales@dealership.com|sales123">John Sales (sales@dealership.com)</option>
-                  <option value="alice@dealership.com|sales123">Alice Dealer (alice@dealership.com)</option>
-                  <option value="bob@dealership.com|sales123">Bob Seller (bob@dealership.com)</option>
-                  <option value="charlie@dealership.com|sales123">Charlie Toyota (charlie@dealership.com)</option>
-                </optgroup>
-              </select>
+                Admin User
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('sales')}
+                className="px-3 py-2 rounded-lg border border-border bg-muted/30 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer text-center"
+              >
+                Sales Officer
+              </button>
             </div>
           </div>
         </div>

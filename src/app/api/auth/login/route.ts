@@ -8,7 +8,9 @@ export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
-    if (!email || !password) {
+    const trimmedEmail = email ? String(email).trim().toLowerCase() : '';
+
+    if (!trimmedEmail || !password) {
       return NextResponse.json(
         { error: 'Email and password are required.' },
         { status: 400 }
@@ -17,7 +19,7 @@ export async function POST(request: Request) {
 
     // 1. Fetch user by email
     const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
+      where: { email: trimmedEmail },
     });
 
     if (!user) {
