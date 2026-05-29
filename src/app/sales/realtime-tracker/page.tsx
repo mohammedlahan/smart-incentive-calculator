@@ -37,6 +37,8 @@ export default function RealTimeTrackerPage() {
 
   const [salesLog, setSalesLog] = useState<SalesLog | null>(null);
   const [slabs, setSlabs] = useState<Slab[]>([]);
+  const [simulatedCars, setSimulatedCars] = useState<number>(0);
+  const [isSimulatorMode, setIsSimulatorMode] = useState<boolean>(false);
 
   const activeMonth = new Date().toISOString().substring(0, 7);
 
@@ -51,6 +53,9 @@ export default function RealTimeTrackerPage() {
         const data = await res.json();
         setSalesLog(data.salesLog);
         setSlabs(data.slabs);
+        if (data.salesLog) {
+          setSimulatedCars(data.salesLog.totalSales);
+        }
       } catch (err: any) {
         setError(err.message || 'Error occurred compiling tracker.');
       } finally {
@@ -81,7 +86,8 @@ export default function RealTimeTrackerPage() {
     );
   }
 
-  const totalCars = salesLog ? salesLog.totalSales : 0;
+  const liveCars = salesLog ? salesLog.totalSales : 0;
+  const totalCars = isSimulatorMode ? simulatedCars : liveCars;
   const calc = calculateIncentive(totalCars, slabs);
   const sortedSlabs = [...slabs].sort((a, b) => a.minRange - b.minRange);
 
@@ -96,6 +102,98 @@ export default function RealTimeTrackerPage() {
         <p className="text-sm text-muted-foreground mt-1.5 font-medium">
           Gamified status meter mapping your performance against target payouts. Sell more units to unlock larger rates.
         </p>
+      </div>
+
+      {/* Interactive Simulator Slider */}
+      <div className="bg-card border border-border/80 rounded-xl p-6 shadow-sm relative overflow-hidden transition-all duration-300 hover:border-border">
+        {/* Decorative corner glow */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-1.5 flex-grow">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
+                isSimulatorMode 
+                  ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' 
+                  : 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+              }`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${
+                  isSimulatorMode ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500 animate-pulse'
+                }`} />
+                {isSimulatorMode ? 'Simulator Active' : 'Live Database Sync'}
+              </span>
+              {isSimulatorMode && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSimulatedCars(liveCars);
+                    setIsSimulatorMode(false);
+                  }}
+                  className="text-[10px] text-primary hover:text-primary/80 hover:underline font-extrabold cursor-pointer"
+                >
+                  Reset to Live ({liveCars} cars)
+                </button>
+              )}
+            </div>
+            <h3 className="font-extrabold text-sm text-foreground">Interactive Incentive Simulator</h3>
+            <p className="text-xs text-muted-foreground font-medium">
+              Adjust the slider or click `+`/`-` to simulate different sales outputs and watch your rates update in real-time.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-6 md:w-3/5">
+            {/* Value Indicator with increment/decrement buttons */}
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                type="button"
+                disabled={totalCars <= 0}
+                onClick={() => {
+                  setIsSimulatorMode(true);
+                  setSimulatedCars(Math.max(0, totalCars - 1));
+                }}
+                className="w-10 h-10 rounded-lg border border-border bg-muted/30 hover:bg-muted font-bold text-lg flex items-center justify-center transition-all cursor-pointer disabled:opacity-30"
+              >
+                -
+              </button>
+              <div className="text-center w-16">
+                <span className="text-3xl font-black text-foreground font-mono">{totalCars}</span>
+                <span className="block text-[8px] text-muted-foreground font-extrabold uppercase tracking-wider">Units</span>
+              </div>
+              <button
+                type="button"
+                disabled={totalCars >= 30}
+                onClick={() => {
+                  setIsSimulatorMode(true);
+                  setSimulatedCars(Math.min(30, totalCars + 1));
+                }}
+                className="w-10 h-10 rounded-lg border border-border bg-muted/30 hover:bg-muted font-bold text-lg flex items-center justify-center transition-all cursor-pointer disabled:opacity-30"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Slider control */}
+            <div className="flex-grow w-full space-y-1">
+              <input
+                type="range"
+                min="0"
+                max="30"
+                value={totalCars}
+                onChange={(e) => {
+                  setIsSimulatorMode(true);
+                  setSimulatedCars(parseInt(e.target.value));
+                }}
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-secondary accent-primary transition-all duration-150"
+              />
+              <div className="flex justify-between text-[9px] text-muted-foreground font-extrabold font-mono">
+                <span>0 Units</span>
+                <span>10 Units</span>
+                <span>20 Units</span>
+                <span>30 Units</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Target Level Progress Ladder */}
