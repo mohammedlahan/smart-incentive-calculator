@@ -190,138 +190,140 @@ export default function CarModelsPage() {
           </button>
         </div>
       ) : (
-        /* Catalog Table Card - Hidden on Mobile */
-        <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest border-b border-border/80 bg-muted/20">
-                  <th className="py-4 px-6">Model ID</th>
-                  <th className="py-4 px-6">Model Name</th>
-                  <th className="py-4 px-6">Trim Suffix</th>
-                  <th className="py-4 px-6">Fuel / Variant</th>
-                  <th className="py-4 px-6 text-right pr-8">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {models.map((model) => (
-                  <tr key={model.id} className="hover:bg-muted/10 transition-colors">
-                    <td className="py-4 px-6 font-mono text-[10px] font-bold text-muted-foreground">
-                      {model.id.substring(0, 8)}...
-                    </td>
-                    <td className="py-4 px-6 font-extrabold text-sm text-foreground flex items-center gap-2.5">
+        <>
+          {/* Catalog Table Card - Hidden on Mobile */}
+          <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest border-b border-border/80 bg-muted/20">
+                    <th className="py-4 px-6">Model ID</th>
+                    <th className="py-4 px-6">Model Name</th>
+                    <th className="py-4 px-6">Trim Suffix</th>
+                    <th className="py-4 px-6">Fuel / Variant</th>
+                    <th className="py-4 px-6 text-right pr-8">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {models.map((model) => (
+                    <tr key={model.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="py-4 px-6 font-mono text-[10px] font-bold text-muted-foreground">
+                        {model.id.substring(0, 8)}...
+                      </td>
+                      <td className="py-4 px-6 font-extrabold text-sm text-foreground flex items-center gap-2.5">
+                        <div className="p-1.5 rounded bg-primary/15 text-primary">
+                          <Car className="h-4 w-4" />
+                        </div>
+                        <span>{model.modelName}</span>
+                      </td>
+                      <td className="py-4 px-6 font-bold text-xs">
+                        <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border/80 uppercase">
+                          {model.baseSuffix}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-xs font-semibold">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                          model.variant === 'EV' 
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300' 
+                            : model.variant === 'Hybrid'
+                            ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/60 dark:text-rose-300'
+                            : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300'
+                        }`}>
+                          <span>{model.variant}</span>
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right pr-8">
+                        <div className="inline-flex gap-2">
+                          <button
+                            onClick={() => openEditModal(model)}
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
+                            title="Edit Model"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`Are you sure you want to delete ${model.modelName} ${model.baseSuffix}?`)) {
+                                handleDelete(model.id);
+                              }
+                            }}
+                            disabled={deletingId === model.id}
+                            className="p-2 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors border border-transparent hover:border-destructive/20 cursor-pointer disabled:opacity-50"
+                            title="Delete Model"
+                          >
+                            {deletingId === model.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Catalog Cards List - Visible on Mobile Only */}
+          {models.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {models.map((model) => (
+                <div key={model.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
                       <div className="p-1.5 rounded bg-primary/15 text-primary">
                         <Car className="h-4 w-4" />
                       </div>
-                      <span>{model.modelName}</span>
-                    </td>
-                    <td className="py-4 px-6 font-bold text-xs">
-                      <span className="px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border/80 uppercase">
-                        {model.baseSuffix}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-xs font-semibold">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                        model.variant === 'EV' 
-                          ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300' 
-                          : model.variant === 'Hybrid'
-                          ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/60 dark:text-rose-300'
-                          : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300'
-                      }`}>
-                        <span>{model.variant}</span>
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="inline-flex gap-2">
-                        <button
-                          onClick={() => openEditModal(model)}
-                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
-                          title="Edit Model"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm(`Are you sure you want to delete ${model.modelName} ${model.baseSuffix}?`)) {
-                              handleDelete(model.id);
-                            }
-                          }}
-                          disabled={deletingId === model.id}
-                          className="p-2 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors border border-transparent hover:border-destructive/20 cursor-pointer disabled:opacity-50"
-                          title="Delete Model"
-                        >
-                          {deletingId === model.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ) : null}
-
-      {/* Mobile Catalog Cards List - Visible on Mobile Only */}
-      {models.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 md:hidden">
-          {models.map((model) => (
-            <div key={model.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded bg-primary/15 text-primary">
-                    <Car className="h-4 w-4" />
+                      <span className="font-extrabold text-sm text-foreground">{model.modelName}</span>
+                    </div>
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                      model.variant === 'EV' 
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300' 
+                        : model.variant === 'Hybrid'
+                        ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/60 dark:text-rose-300'
+                        : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300'
+                    }`}>
+                      {model.variant}
+                    </span>
                   </div>
-                  <span className="font-extrabold text-sm text-foreground">{model.modelName}</span>
+                  <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold block">Trim Suffix</span>
+                      <span className="font-bold text-foreground">{model.baseSuffix}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Model ID</span>
+                      <span className="font-mono text-[9px] text-muted-foreground block text-right">{model.id.substring(0, 8)}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(model)}
+                      className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete ${model.modelName} ${model.baseSuffix}?`)) {
+                          handleDelete(model.id);
+                        }
+                      }}
+                      disabled={deletingId === model.id}
+                      className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                  model.variant === 'EV' 
-                    ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300' 
-                    : model.variant === 'Hybrid'
-                    ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950/40 dark:border-rose-900/60 dark:text-rose-300'
-                    : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/40 dark:border-amber-900/60 dark:text-amber-300'
-                }`}>
-                  {model.variant}
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Trim Suffix</span>
-                  <span className="font-bold text-foreground">{model.baseSuffix}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Model ID</span>
-                  <span className="font-mono text-[9px] text-muted-foreground block text-right">{model.id.substring(0, 8)}</span>
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
-                <button
-                  type="button"
-                  onClick={() => openEditModal(model)}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (confirm(`Are you sure you want to delete ${model.modelName} ${model.baseSuffix}?`)) {
-                      handleDelete(model.id);
-                    }
-                  }}
-                  disabled={deletingId === model.id}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  Delete
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Add/Edit Modal */}

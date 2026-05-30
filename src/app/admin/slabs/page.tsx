@@ -207,132 +207,134 @@ export default function IncentiveSlabsPage() {
           </button>
         </div>
       ) : (
-        /* Slabs Table Card - Hidden on Mobile */
-        <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest border-b border-border/80 bg-muted/20">
-                  <th className="py-4 px-6">Slab Range</th>
-                  <th className="py-4 px-6">Min Volume</th>
-                  <th className="py-4 px-6">Max Volume</th>
-                  <th className="py-4 px-6">Incentive Per Car</th>
-                  <th className="py-4 px-6 text-right pr-8">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {slabs.map((slab) => (
-                  <tr key={slab.id} className="hover:bg-muted/10 transition-colors">
-                    <td className="py-4 px-6 font-extrabold text-sm text-foreground flex items-center gap-2.5">
+        <>
+          {/* Slabs Table Card - Hidden on Mobile */}
+          <div className="hidden md:block bg-card border border-border/80 rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-[10px] font-extrabold text-muted-foreground uppercase tracking-widest border-b border-border/80 bg-muted/20">
+                    <th className="py-4 px-6">Slab Range</th>
+                    <th className="py-4 px-6">Min Volume</th>
+                    <th className="py-4 px-6">Max Volume</th>
+                    <th className="py-4 px-6">Incentive Per Car</th>
+                    <th className="py-4 px-6 text-right pr-8">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {slabs.map((slab) => (
+                    <tr key={slab.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="py-4 px-6 font-extrabold text-sm text-foreground flex items-center gap-2.5">
+                        <div className="p-1.5 rounded bg-primary/15 text-primary">
+                          <Sliders className="h-4 w-4" />
+                        </div>
+                        <span>
+                          {slab.maxRange === null 
+                            ? `${slab.minRange}+ cars sold` 
+                            : `${slab.minRange} – ${slab.maxRange} cars sold`}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 font-semibold text-xs font-mono text-muted-foreground">
+                        {slab.minRange} units
+                      </td>
+                      <td className="py-4 px-6 text-xs font-semibold font-mono text-muted-foreground">
+                        {slab.maxRange === null ? '∞ (No Limit)' : `${slab.maxRange} units`}
+                      </td>
+                      <td className="py-4 px-6 text-sm font-black text-primary">
+                        ₹{slab.incentivePerCar.toLocaleString('en-IN')}/car
+                      </td>
+                      <td className="py-4 px-6 text-right pr-8">
+                        <div className="inline-flex gap-2">
+                          <button
+                            onClick={() => openEditModal(slab)}
+                            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
+                            title="Edit Slab"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`Are you sure you want to delete this slab?`)) {
+                                handleDelete(slab.id);
+                              }
+                            }}
+                            disabled={deletingId === slab.id}
+                            className="p-2 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors border border-transparent hover:border-destructive/20 cursor-pointer disabled:opacity-50"
+                            title="Delete Slab"
+                          >
+                            {deletingId === slab.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Slabs Cards List - Visible on Mobile Only */}
+          {slabs.length > 0 && (
+            <div className="grid grid-cols-1 gap-4 md:hidden">
+              {slabs.map((slab) => (
+                <div key={slab.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
                       <div className="p-1.5 rounded bg-primary/15 text-primary">
                         <Sliders className="h-4 w-4" />
                       </div>
-                      <span>
+                      <span className="font-extrabold text-sm text-foreground">
                         {slab.maxRange === null 
-                          ? `${slab.minRange}+ cars sold` 
-                          : `${slab.minRange} – ${slab.maxRange} cars sold`}
+                          ? `${slab.minRange}+ Units Target` 
+                          : `${slab.minRange} – ${slab.maxRange} Units Target`}
                       </span>
-                    </td>
-                    <td className="py-4 px-6 font-semibold text-xs font-mono text-muted-foreground">
-                      {slab.minRange} units
-                    </td>
-                    <td className="py-4 px-6 text-xs font-semibold font-mono text-muted-foreground">
-                      {slab.maxRange === null ? '∞ (No Limit)' : `${slab.maxRange} units`}
-                    </td>
-                    <td className="py-4 px-6 text-sm font-black text-primary">
+                    </div>
+                    <span className="text-xs font-black text-primary bg-primary/10 px-2.5 py-1 rounded border border-primary/20">
                       ₹{slab.incentivePerCar.toLocaleString('en-IN')}/car
-                    </td>
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="inline-flex gap-2">
-                        <button
-                          onClick={() => openEditModal(slab)}
-                          className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
-                          title="Edit Slab"
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            if (confirm(`Are you sure you want to delete this slab?`)) {
-                              handleDelete(slab.id);
-                            }
-                          }}
-                          disabled={deletingId === slab.id}
-                          className="p-2 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors border border-transparent hover:border-destructive/20 cursor-pointer disabled:opacity-50"
-                          title="Delete Slab"
-                        >
-                          {deletingId === slab.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      ) : null}
-
-      {/* Mobile Slabs Cards List - Visible on Mobile Only */}
-      {slabs.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 md:hidden">
-          {slabs.map((slab) => (
-            <div key={slab.id} className="bg-card border border-border/80 rounded-xl p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded bg-primary/15 text-primary">
-                    <Sliders className="h-4 w-4" />
+                    </span>
                   </div>
-                  <span className="font-extrabold text-sm text-foreground">
-                    {slab.maxRange === null 
-                      ? `${slab.minRange}+ Units Target` 
-                      : `${slab.minRange} – ${slab.maxRange} Units Target`}
-                  </span>
+                  <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold block">Min Bound</span>
+                      <span className="font-bold text-foreground">{slab.minRange} units</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Max Bound</span>
+                      <span className="font-bold text-foreground block text-right">
+                        {slab.maxRange === null ? 'No Limit' : `${slab.maxRange} units`}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(slab)}
+                      className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to delete this slab?`)) {
+                          handleDelete(slab.id);
+                        }
+                      }}
+                      disabled={deletingId === slab.id}
+                      className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
-                <span className="text-xs font-black text-primary bg-primary/10 px-2.5 py-1 rounded border border-primary/20">
-                  ₹{slab.incentivePerCar.toLocaleString('en-IN')}/car
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs border-t border-border/40 pt-3.5">
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">Min Bound</span>
-                  <span className="font-bold text-foreground">{slab.minRange} units</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold block text-right">Max Bound</span>
-                  <span className="font-bold text-foreground block text-right">
-                    {slab.maxRange === null ? 'No Limit' : `${slab.maxRange} units`}
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 border-t border-border/40 pt-3.5">
-                <button
-                  type="button"
-                  onClick={() => openEditModal(slab)}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60 rounded-lg transition-colors cursor-pointer"
-                >
-                  Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (confirm(`Are you sure you want to delete this slab?`)) {
-                      handleDelete(slab.id);
-                    }
-                  }}
-                  disabled={deletingId === slab.id}
-                  className="px-3.5 py-1.5 text-xs font-semibold text-destructive border border-destructive/20 hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  Delete
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Add/Edit Modal */}

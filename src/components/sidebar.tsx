@@ -16,7 +16,8 @@ import {
   X,
   User,
   Shield,
-  Loader2
+  Loader2,
+  Users
 } from 'lucide-react';
 import ThemeToggle from './theme-toggle';
 import { useToast } from './ui/toast';
@@ -70,6 +71,7 @@ export default function Sidebar({ role }: SidebarProps) {
     { href: '/admin/car-models', label: 'Car Models', icon: Car },
     { href: '/admin/slabs', label: 'Incentive Slabs', icon: Sliders },
     { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+    { href: '/admin/users', label: 'Manage Users', icon: Users },
   ];
 
   const salesLinks = [
