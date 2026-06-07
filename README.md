@@ -1,19 +1,28 @@
-# Smart Incentive Calculator with Dynamic Slab Admin Panel
+# 🚗 Toyota Dealership Smart Incentive Calculator
 
-An enterprise-ready vehicle dealership incentive management dashboard featuring **Role-Based Access Control (RBAC)**, dynamic incentive slab configuring, real-time client calculations, and structured performance analytics.
+An enterprise-ready vehicle dealership incentive management dashboard featuring **Role-Based Access Control (RBAC)**, dynamic incentive slab configuring, real-time commission tracking, dynamic staff management, and structured performance analytics.
 
-Built using the **Next.js 14 App Router**, **Prisma ORM**, **Tailwind CSS**, and **TypeScript**, and designed to integrate seamlessly with **Supabase PostgreSQL**.
+Built using **Next.js 14 (App Router)**, **Prisma ORM**, **Tailwind CSS**, and **TypeScript**, with data persistence hosted on **Neon PostgreSQL**.
 
 ---
 
-## 🛠️ Technical Stack
+## ⚡ Core Features
 
-- **Frontend:** Next.js 14 (App Router), Tailwind CSS, TypeScript, Lucide Icons.
-- **Backend:** Next.js API Routes (Serverless Handler Runtime).
-- **Database ORM:** Prisma Client 5.x.
-- **Authentication:** Custom JWT-cookie based session verification using `jose` (Edge runtime compatible).
-- **Analytics Visualization:** Recharts.
-- **Report Exports:** Native client-side CSV spreadsheet compilation and Print-optimized PDF layouts.
+### 👤 1. Admin Management Suite (`/admin/*`)
+* **Incentive Slabs Manager**: Set, update, and remove commission rate tiers with integrated overlap validation to prevent clashing slabs.
+* **Vehicle Fleet Configurator**: Add and configure Toyota car models, variants (Petrol, Hybrid, EV), and suffix levels.
+* **Staff Access Center (User CRUD)**: Create, edit, or delete user accounts (Admins & Sales Officers) directly from the UI with password encryption. Includes self-deletion prevention.
+* **Analytics Center**: Visual charts powered by Recharts mapping monthly performance metrics, top-performing sales reps, and model popularity.
+
+### 💼 2. Sales Officer Dashboard (`/sales/*`)
+* **Real-Time Calculator Widget**: Interactive vehicle log input that calculates running commissions instantly.
+* **Target Milestone Tracker**: Progress bar indicating how many more cars are required to reach the next commission slab.
+* **Historical Logs**: Tabular logs of monthly sales performance.
+* **Report Exports**: Download formatted **CSV statements** or print-ready **PDF reports** of commission logs.
+
+### 🛡️ 3. Security & Access Control
+* **JWT Cookie Authentication**: Secure Edge-compatible session storage using JSON Web Tokens.
+* **Middleware Route Guarding**: Server-level route protection that automatically blocks unauthorized role access and redirects to safe pages.
 
 ---
 
@@ -21,14 +30,22 @@ Built using the **Next.js 14 App Router**, **Prisma ORM**, **Tailwind CSS**, and
 
 The system seeds two standard accounts with preset roles. Use these to log in and test different dashboard interfaces:
 
-| Portal Role | Username / Email | Password | Allowed Path Router |
+| Portal Role | Username / Email | Password | Allowed Router Scope |
 | :--- | :--- | :--- | :--- |
 | **Admin Portal** | `admin@dealership.com` | `admin123` | `/admin/*` only |
 | **Sales Officer Portal** | `sales@dealership.com` | `sales123` | `/sales/*` only |
 
-> [!NOTE]
-> **Server-Side RBAC Guarding:**
-> Route access is protected at the server-level using Next.js Edge Middleware. Trying to access `/admin/*` routes as a Sales Officer, or `/sales/*` as an Admin, will trigger a redirect to `/unauthorized` (403 Access Denied).
+---
+
+## 🛠️ Technical Stack
+
+* **Framework**: Next.js 14 (App Router)
+* **Styling**: Tailwind CSS
+* **Database Host**: Neon PostgreSQL
+* **Database ORM**: Prisma Client
+* **Password Encryption**: bcryptjs
+* **Visualizations**: Recharts
+* **Authentication**: jose (Edge compatible JWT)
 
 ---
 
@@ -43,20 +60,20 @@ npm install
 ```
 
 ### 2. Configure Database Variables
-Open the generated `.env` file in the root directory and update the `DATABASE_URL` string to connect your database (e.g. Supabase PostgreSQL or local Postgres):
+Create a `.env` file in the root directory and add the connection string variables:
 ```env
 DATABASE_URL="postgresql://postgres:password@db.supabase.co:5432/postgres?schema=public"
 JWT_SECRET="smart_incentive_calculator_jwt_secret_key_2026_vehicle_dealership"
 ```
 
-### 3. Apply Schema Migrations
-Deploy the tables (users, car_models, incentive_slabs, sales_logs, sales_items) directly to the database:
+### 3. Sync Database Tables
+Deploy the tables directly to your database instance:
 ```bash
 npx prisma db push
 ```
 
 ### 4. Seed Default Database Records
-Populate default vehicle models, default slab benchmarks, and the demo accounts:
+Populate default vehicle models, default commission slabs, and the demo logins:
 ```bash
 npx prisma db seed
 ```
@@ -65,29 +82,25 @@ npx prisma db seed
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 📐 Key Architectures
+## 📐 Key Core Logic
 
-### Real-Time Incentive Calculator (`src/lib/incentive.ts`)
-Calculates monthly incentive payouts using the **Flat-Tier Model**:
-1. Checks the total number of cars sold across all models for the given month.
-2. Evaluates the sorted list of configured slabs to find the matching range:
-   - `min_range <= total_sales <= max_range` (where a null max_range means infinity, e.g. `8+`).
+### Flat-Tier Incentive Matcher (`src/lib/incentive.ts`)
+Matches the total number of cars sold across all models for the given month:
+1. Sorts active slabs in ascending order.
+2. Checks if `min_range <= total_sales <= max_range` (a null max_range represents infinity).
 3. Multiplies the matched rate by the total number of cars.
-4. Identifies the *next* milestone level and calculates how many more cars are needed to reach it.
 
-### Slab Overlap Protection (`src/lib/slabs.ts`)
-Admins can adjust slab ranges anytime. Overlap validation ensures that no two active slabs clash, preventing double-payout calculations. 
-Two ranges `A` and `B` intersect if:
+### Slab Overlap Validation (`src/lib/slabs.ts`)
+Ensures no two active incentive slabs overlap. Two ranges `A` and `B` intersect if:
 $$\text{A.min} \le \text{B.max} \quad \text{AND} \quad \text{A.max} \ge \text{B.min}$$
-*(where a null max range represents infinity)*
 
 ---
 
-## 🗂️ Database Tables Layout
+## 🗂️ Database Layout
 
 ```
                         ┌───────────────┐
@@ -106,9 +119,3 @@ $$\text{A.min} \le \text{B.max} \quad \text{AND} \quad \text{A.max} \ge \text{B.
   │  car_models   ├─────►  sales_items  │
   └───────────────┘ 1   └───────────────┘ 0..*
 ```
-
-1. **users:** Email login, password hash, and authorization role (`ADMIN`, `SALES_OFFICER`).
-2. **car_models:** Vehicle specs (Camry, Corolla, RAV4, Prius, Tundra) with suffixes and fuel types (Petrol, Hybrid, EV).
-3. **incentive_slabs:** Dynamic thresholds defining payout multipliers.
-4. **sales_logs:** Main monthly performance logs storing overall sales and incentives.
-5. **sales_items:** Details of quantities sold per car model for a specific month.
